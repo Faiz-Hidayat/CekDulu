@@ -1,0 +1,28 @@
+# Rahasia lokal
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+
+# Data lokal
+uploads/
+/docs/references/private/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+
+# Lingkungan dan cache
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+dist/
+/output/playwright/

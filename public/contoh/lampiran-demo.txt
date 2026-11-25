@@ -1,0 +1,2 @@
+DEMO/SIMULASI CekDulu.
+Lampiran sintetis untuk menguji SHA-256 lokal.
