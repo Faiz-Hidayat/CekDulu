@@ -1,0 +1,125 @@
+.select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 11px;
+  border: 1px solid var(--control-border);
+  border-radius: var(--control-radius);
+  background: var(--surface);
+  font-size: .9rem;
+  font-weight: 650;
+  text-align: start;
+}
+
+.select-trigger:is(:hover, [data-state="open"]):not(:disabled) { border-color: var(--primary); }
+.select-trigger[data-placeholder] { color: var(--muted); }
+.select-trigger:disabled { background: var(--process-surface); color: var(--process); }
+.select-trigger [data-slot="select-value"] {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.selected-scenario { display: block; overflow: hidden; text-overflow: ellipsis; }
+.select-chevron { display: grid; place-items: center; flex: none; color: var(--primary); }
+.select-trigger[data-state="open"] .select-chevron { transform: rotate(180deg); }
+
+.select-content {
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  width: var(--radix-select-trigger-width);
+  max-width: var(--radix-select-content-available-width);
+  max-height: min(25rem, var(--radix-select-content-available-height));
+  overflow: hidden;
+  border: 1px solid var(--divider);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--ink) 18%, transparent);
+  transform-origin: var(--radix-select-content-transform-origin);
+}
+.select-viewport { min-height: 0; padding: 4px; }
+.select-label { padding: 7px 9px 5px; color: var(--muted); font-size: .75rem; font-weight: 700; }
+.select-separator { height: 1px; margin: 4px; background: var(--divider); }
+.select-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 7px 9px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: .9rem;
+  line-height: 1.35;
+  outline: none;
+}
+.select-item [data-slot="select-item-text"] { min-width: 0; overflow-wrap: anywhere; }
+.select-item[data-state="checked"] { color: var(--primary-hover); font-weight: 700; }
+.select-item[data-highlighted] {
+  background: var(--message-surface);
+  color: var(--primary-hover);
+  outline: 1px solid color-mix(in srgb, var(--primary) 52%, var(--message-surface));
+  outline-offset: -1px;
+}
+.select-item[data-disabled] { color: var(--muted); cursor: not-allowed; }
+.select-indicator { display: grid; flex: none; color: var(--primary); }
+.select-scroll-button {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-height: 24px;
+  background: var(--surface);
+  color: var(--primary);
+}
+.select-scroll-button[data-direction="up"] .icon { transform: rotate(180deg); }
+
+.checkbox-control {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--control-border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--surface);
+}
+.checkbox-control[data-state="checked"] { border-color: var(--primary); background: var(--primary); }
+.checkbox-control:disabled { border-color: var(--divider); background: var(--process-surface); }
+.checkbox-indicator { display: grid; place-items: center; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .select-trigger, .checkbox-control { transition: background-color 140ms ease, border-color 140ms ease; }
+  .select-chevron { transition: transform 180ms var(--ease-out); }
+  .select-content[data-side="top"] { --select-offset: 5px; }
+  .select-content[data-state="open"] .select-viewport { animation: select-open 190ms var(--ease-out); }
+  .selected-scenario { animation: scenario-change 205ms var(--ease-out); }
+  .select-item { transition: background-color 120ms ease, color 120ms ease; }
+  .checkbox-indicator[data-state="checked"] { animation: indicator-in 180ms var(--ease-out); }
+  .checkbox-indicator[data-state="unchecked"] { animation: indicator-out 100ms ease-out both; }
+}
+
+@keyframes select-open {
+  from { opacity: .72; transform: translateY(var(--select-offset, -5px)) scale(.978); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes scenario-change {
+  from { opacity: .75; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes indicator-in {
+  from { opacity: .5; transform: scale(.76); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes indicator-out {
+  to { opacity: 0; transform: scale(.76); }
+}

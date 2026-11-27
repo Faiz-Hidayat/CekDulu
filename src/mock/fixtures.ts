@@ -131,7 +131,7 @@ function scamScreenshot(): Fixture {
     artifacts: [screenshot, message, url],
     checks: [extraction, context, reputation],
     confirmation: {
-      label: 'Periksa dan koreksi teks hasil OCR',
+      label: 'Konfirmasi teks',
       initialText: exampleText.replace('deposit', 'deposlt'),
       exampleText,
     },

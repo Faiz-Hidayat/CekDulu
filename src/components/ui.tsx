@@ -1,5 +1,5 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import type { AnalysisStatus, ArtifactKind, Check, Verdict } from '../analysis/model'
+import type { ComponentPropsWithRef, ReactNode } from 'react'
+import type { AnalysisStatus, ArtifactKind, Check, Specialist, Verdict } from '../analysis/model'
 
 const paths = {
   arrow: 'M5 12h14m-6-6 6 6-6 6',
@@ -17,11 +17,13 @@ const paths = {
   close: 'm6 6 12 12M18 6 6 18',
   check: 'm5 12 4 4L19 6',
   checkList: 'M10 6h10M10 12h10M10 18h10M4 5l1 1 2-2M4 11l1 1 2-2M4 17l1 1 2-2',
+  scan: 'M8 4H5a1 1 0 0 0-1 1v3m12-4h3a1 1 0 0 1 1 1v3m0 8v3a1 1 0 0 1-1 1h-3m-8 0H5a1 1 0 0 1-1-1v-3M4 12h16',
   warning: 'M12 3 2 21h20L12 3Zm0 6v5m0 3h.01',
   danger: 'M8 3h8l5 5v8l-5 5H8l-5-5V8zm4 5v5m0 3h.01',
   unknown: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM9 9a3 3 0 0 1 6 0c0 2-3 2.4-3 4m0 3h.01',
   info: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM12 11v6m0-10h.01',
   clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM12 7v5l3 2',
+  calendar: 'M8 3v4m8-4v4M4 10h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z',
   running: 'M19 5a9 9 0 1 1-7-2',
   half: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM12 2v20m0-7 7-7m-7 2 5-5m-5 15 9-9',
   hourglass: 'M6 3h12M6 21h12M7 3v4c0 2 2 4 5 5-3 1-5 3-5 5v4m10-18v4c0 2-2 4-5 5 3 1 5 3 5 5v4',
@@ -42,7 +44,7 @@ export function Icon({ name, size = 20 }: { name: IconName; size?: number }) {
 }
 
 export function Button({ children, styleKind = 'primary', icon, suffix, className = '', type = 'button', ...props }:
-  ButtonHTMLAttributes<HTMLButtonElement> & { styleKind?: 'primary' | 'secondary' | 'quiet'; icon?: IconName; suffix?: IconName }) {
+  ComponentPropsWithRef<'button'> & { styleKind?: 'primary' | 'secondary' | 'quiet'; icon?: IconName; suffix?: IconName }) {
   return (
     <button type={type} className={`button button-${styleKind} ${className}`} {...props}>
       {icon && <Icon name={icon} size={18} />}{children}{suffix && <Icon name={suffix} size={18} />}
@@ -51,15 +53,19 @@ export function Button({ children, styleKind = 'primary', icon, suffix, classNam
 }
 
 export function DemoBadge() {
-  return <span className="demo-badge"><Icon name="flask" size={15} />DEMO/SIMULASI</span>
+  return <span className="demo-badge motion-in"><Icon name="flask" size={15} />DEMO/SIMULASI</span>
 }
 
 export function InlineNotice({ children, danger = false, id }: { children: ReactNode; danger?: boolean; id?: string }) {
-  return <p className={`notice ${danger ? 'notice-error' : ''}`} id={id} role={danger ? 'alert' : undefined}><Icon name={danger ? 'warning' : 'info'} size={18} /><span>{children}</span></p>
+  return <p className={`notice motion-in ${danger ? 'notice-error' : ''}`} id={id} role={danger ? 'alert' : undefined}><Icon name={danger ? 'warning' : 'info'} size={18} /><span>{children}</span></p>
 }
 
 export const artifactIcon: Record<ArtifactKind, IconName> = {
   message: 'message', screenshot: 'image', url: 'link', qr: 'qr', file: 'file', hash: 'hash',
+}
+
+export const artifactFamily: Record<ArtifactKind, Specialist> = {
+  message: 'message', screenshot: 'message', url: 'url', qr: 'url', file: 'file', hash: 'file',
 }
 
 export const verdictPresentation: Record<Verdict, { label: string; icon: IconName; tone: string }> = {
@@ -81,20 +87,25 @@ const statusPresentation: Record<AnalysisStatus, { label: string; icon: IconName
 
 export function VerdictBadge({ verdict }: { verdict: Verdict | null }) {
   const state = verdict ? verdictPresentation[verdict] : { label: 'Belum dinilai', icon: 'unknown' as const, tone: 'process' }
-  return <span className={`badge tone-${state.tone}`}><Icon name={state.icon} size={15} />{state.label}</span>
+  return <span className={`badge motion-in tone-${state.tone}`}><Icon name={state.icon} size={15} />{state.label}</span>
 }
 
 export function StatusBadge({ status, check }: { status: AnalysisStatus | null; check?: Check }) {
   const state = check?.coverage === 'no_data'
     ? { label: 'Tanpa catatan', icon: 'unknown' as const }
     : status ? statusPresentation[status] : { label: 'Dilewati', icon: 'info' as const }
-  return <span className="badge tone-process"><Icon name={state.icon} size={15} />{state.label}</span>
+  return <span className="badge motion-in tone-process" key={state.label}><Icon name={state.icon} size={15} />{state.label}</span>
 }
 
 const timeFormat = new Intl.DateTimeFormat('id-ID', {
   dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Jakarta',
 })
 
-export function DateLabel({ value }: { value: string }) {
-  return <time dateTime={value}>{timeFormat.format(new Date(value))} WIB</time>
+export function DateLabel({ value, variant = 'inline' }: { value: string; variant?: 'inline' | 'chip' }) {
+  return (
+    <time className={variant === 'chip' ? 'date-label date-label-chip' : 'date-label'} dateTime={value}>
+      <Icon name="calendar" size={14} />{' '}
+      <span>{timeFormat.format(new Date(value))} WIB</span>
+    </time>
+  )
 }

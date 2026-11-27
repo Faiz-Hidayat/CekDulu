@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { App } from './App'
 import { mockAnalysis } from './mock/service'
 import './styles.css'
+import './components/primitives/controls.css'
+import './components/workspace.css'
 
 const root = document.getElementById('root')
 if (!root) throw new Error('CekDulu tidak dapat dimuat.')
